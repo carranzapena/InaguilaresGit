@@ -1,0 +1,472 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+				<div class="ui-g-12">
+			<p:dialog header="Formulario de inscripción" modal="true"
+				widgetVar="dlgInscripcion"  showEffect="explode" 
+				hideEffect="explode" styleClass="disable-scroll" id="modalInscripcion">
+					<h:form id="formInscripcion">					
+							<p:wizard flowListener="#{inscripcionController.onFlowProcess}" id="wizardInscripcion" widgetVar="wvins">
+								<p:tab id="personal" title="Personal">
+									<p:panel header="Información Personal">
+										<p:messages />
+										<h:panelGrid columns="4" columnClasses="label, value">
+											<h:outputText value="Nombres: *" />
+											<p:inputText id="nombre"
+												value="#{inscripcionController.personaEstudiante.nombres}"
+												required="true" requiredMessage="Los nombres son requeridos"
+												label="Nombres" />
+
+											<h:outputText value="Apellidos: *" />
+											<p:inputText id="apellido"
+												value="#{inscripcionController.personaEstudiante.apellidos}"
+												required="true"
+												requiredMessage="Los Apellidos son requerido"
+												label="Apellidos" />
+
+											<h:outputText value="Telefono *" />
+											<p:inputMask id="tel"
+												value="#{inscripcionController.personaEstudiante.telefono}"
+												required="true" requiredMessage="Telefono es requerido"
+												mask="9999-9999" label="Telefono" />
+
+											<h:outputText value="Celular: " />
+											<p:inputMask id="cel"
+												value="#{inscripcionController.personaEstudiante.celular}"
+												label="Celular" requiredMessage="El celular es requerido"
+												mask="9999-9999" />
+
+											<h:outputText value="Fecha de Nacimiento: *" />
+											<p:calendar id="dateBirth"
+												value="#{inscripcionController.personaEstudiante.fechaNacimiento}"
+												label="Fecha de Nacimiento" pattern="dd/MM/yyyy"
+												required="true" navigator="true"
+												requiredMessage="La fecha de nacimiento es requerida"
+												maxdate="#{inscripcionController.ahora}"
+												yearRange="c-25:c+25" />
+
+											<h:outputText value="Nacionalidad: *" />
+											<p:selectOneMenu id="nacionalidad" style="width: 125px;"
+												required="true" requiredMessage="Nacionalidad es requerido"
+												value="#{inscripcionController.personaEstudiante.nacionalidad}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Salvadoreña" itemValue="S" />
+												<f:selectItem itemLabel="Extranjera" itemValue="E" />
+											</p:selectOneMenu>
+											<h:outputText value="Sexo: *" />
+											<p:selectOneMenu id="sexo" autoWidth="false"
+												style="width: 125px;" required="true"
+												requiredMessage="El Sexo es requerido"
+												value="#{inscripcionController.personaEstudiante.sexo}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Masculino" itemValue="M" />
+												<f:selectItem itemLabel="Femenino" itemValue="F" />
+											</p:selectOneMenu>
+										</h:panelGrid>
+									</p:panel>
+								</p:tab>
+
+								<p:tab id="address" title="Dirección">
+									<p:panel header="Detalles de dirección">
+										<p:messages />
+										<h:panelGrid columns="4" columnClasses="label, value">
+											<p:outputLabel value="Departamento: *" />
+											<p:selectOneMenu id="departamento"
+												value="#{inscripcionController.departamento}"
+												required="true" requiredMessage="Departamento Requerido"
+												style="width:150px">
+												<p:ajax
+													listener="#{inscripcionController.onDepartamentoChange()}"
+													update="municipio" />
+												<f:selectItem itemLabel="Seleccionar Departamento"
+													itemDisabled="true" />
+												<f:selectItems
+													value="#{inscripcionController.departamentos}"
+													var="departamento" itemLabel="#{departamento.nombre}"
+													itemValue="#{departamento.nombre}" />
+											</p:selectOneMenu>
+
+											<p:outputLabel value="Municipio: *" />
+											<p:selectOneMenu id="municipio"
+												value="#{inscripcionController.municipio.idmunicipio}"
+												required="true" requiredMessage="Municipio Requerido"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar Municipio"
+													itemDisabled="true" />
+												<f:selectItems value="#{inscripcionController.municipios}"
+													var="municipio" itemLabel="#{municipio.nombre}"
+													itemValue="#{municipio.idmunicipio}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Dirección: *" />
+											<p:inputText
+												value="#{inscripcionController.direccion.detalle}"
+												required="true" requiredMessage="Dirección es requerida"
+												label="Detalle" size="24" />
+
+											<h:outputText value="Distancia en Llegar: " />
+											<p:inputNumber id="dis" size="24"
+												value="#{inscripcionController.personaEstudiante.distanciaParaLlegar}"
+												label="KM">
+												<p:watermark for="dis" value="KM" id="disWM" />
+											</p:inputNumber>
+											<p:outputLabel value="Medio de Transporte: *" />
+											<p:selectOneMenu id="medio"
+												value="#{inscripcionController.medioTransporteEstudiante.idMediot}"
+												required="true" requiredMessage="Medio Requerido"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems
+													value="#{inscripcionController.mediosTransporte}"
+													var="medioT" itemLabel="#{medioT.nombre}"
+													itemValue="#{medioT.idMediot}" />
+											</p:selectOneMenu>
+											<h:outputText value="Zona: *" />
+											<p:selectOneMenu id="zona" style="width:150px" required="true"
+												requiredMessage="La zona es requerida"
+												value="#{inscripcionController.direccion.zona}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Urbana" itemValue="U" />
+												<f:selectItem itemLabel="Rural" itemValue="R" />
+											</p:selectOneMenu>
+										</h:panelGrid>
+									</p:panel>
+								</p:tab>
+								<p:tab id="resp" title="Responsable">
+									<p:panel header="Información del Responsable">
+										<p:messages />
+										<h:panelGrid columns="4" columnClasses="label, value">
+											<h:outputText value="Nombres: *" />
+											<p:inputText id="nombreR" size="24"
+												value="#{inscripcionController.personaResponsable.nombres}"
+												required="true" requiredMessage="Los nombres son requeridos"
+												label="Nombres" />
+
+											<h:outputText value="Apellidos: *" />
+											<p:inputText id="apellidoR" 
+												value="#{inscripcionController.personaResponsable.apellidos}"
+												required="true"
+												requiredMessage="Los Apellidos son requerido"
+												label="Apellidos" />
+
+											<h:outputText value="Parentesco: *" />
+											<p:selectOneMenu id="parentescoR"
+												value="#{inscripcionController.parentesco.idparentesco}"
+												required="true" requiredMessage="Parentesco es Requerido"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems value="#{inscripcionController.parentescos}"
+													var="p" itemLabel="#{p.nombre}"
+													itemValue="#{p.idparentesco}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Telefono: *" />
+											<p:inputMask id="telR"
+												value="#{inscripcionController.personaResponsable.telefono}"
+												required="true" requiredMessage="Telefono es requerido"
+												mask="9999-9999" label="Telefono" />
+
+											<h:outputText value="Celular: " />
+											<p:inputMask id="celR" size="24"
+												value="#{inscripcionController.personaResponsable.celular}"
+												label="Celular" mask="9999-9999" />
+
+											<h:outputText value="Nacionalidad: *" />
+											<p:selectOneMenu id="nacionalidadR" style="width: 125px;"
+												required="true" requiredMessage="Nacionalidad es requerido"
+												value="#{inscripcionController.personaResponsable.nacionalidad}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Salvadoreña" itemValue="S" />
+												<f:selectItem itemLabel="Extranjera" itemValue="E" />
+											</p:selectOneMenu>
+											<p:outputLabel value="Medio de Transporte: *" />
+											<p:selectOneMenu id="medioR"
+												value="#{inscripcionController.medioTransporteResponsable.idMediot}"
+												required="true" requiredMessage="Medio Requerido"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems
+													value="#{inscripcionController.mediosTransporte}"
+													var="medioT" itemLabel="#{medioT.nombre}"
+													itemValue="#{medioT.idMediot}" />
+											</p:selectOneMenu>
+											<h:outputText value="Sexo: *" />
+											<p:selectOneMenu id="sexoR" autoWidth="false" required="true"
+												requiredMessage="El Sexo es requerido" style="width: 125px;"
+												value="#{inscripcionController.personaResponsable.sexo}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Masculino" itemValue="M" />
+												<f:selectItem itemLabel="Femenino" itemValue="F" />
+											</p:selectOneMenu>
+											<h:outputText value="Correo Electronico: *" />
+											<p:inputText id="emailR" size="24"
+												value="#{inscripcionController.personaResponsable.email}"
+												required="true"
+												requiredMessage="El Correo electronico es requerido"
+												label="Email" />
+
+											<h:outputText value="Dui: " />
+											<p:inputMask id="duiR"
+												value="#{inscripcionController.personaResponsable.dui}"
+												required="true" label="Dui"
+												requiredMessage="El Dui es requerido" mask="999999999" />
+										</h:panelGrid>
+									</p:panel>
+								</p:tab>
+								<p:tab id="estudiante" title="Estudiante">
+									<p:panel header="Información del Estudiante">
+										<h:panelGrid columns="4" columnClasses="label, value">
+											<h:outputText value="Año de estudio anterior: *" />
+											<p:inputMask id="anio" size="24"
+												value="#{inscripcionController.estudiante.anioEstudioAnterior}"
+												required="true" requiredMessage="Año es requerido"
+												mask="9999" label="Año anterior" />
+
+											<h:outputText value="Repite Grado: *" />
+											<p:selectOneMenu id="rg" style="width:150px" required="true"
+												requiredMessage="Repite Grado es requerido"
+												value="#{inscripcionController.estudiante.repiteGrado}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Si" itemValue="SI" />
+												<f:selectItem itemLabel="No" itemValue="NO" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Modalidad: *" />
+											<p:selectOneMenu id="modalidad" style="width:150px"
+												required="true" requiredMessage="Modalidad es requerido"
+												value="#{inscripcionController.modalidad.idturno}">
+												<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+												<f:selectItem itemLabel="Presencial" itemValue="1" />
+												<f:selectItem itemLabel="A distancia" itemValue="2" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Nivel: *" />
+											<p:selectOneMenu id="nivel"
+												value="#{inscripcionController.nivel.idNivel}"
+												required="true" requiredMessage="Nivel es Requerido"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems value="#{inscripcionController.niveles}"
+													var="n" itemLabel="#{n.nombre}" itemValue="#{n.idNivel}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Especialidad: *" />
+											<p:selectOneMenu id="especialidad"
+												value="#{inscripcionController.especialidad.idespecialidad}"
+												required="true"
+												requiredMessage="La Especialidad es Requerida"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems
+													value="#{inscripcionController.especialidades}" var="e"
+													itemLabel="#{e.nombre}" itemValue="#{e.idespecialidad}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Enfermedad: " />
+											<p:selectOneMenu id="enfermedad"
+												value="#{inscripcionController.enfermedad.idenfermedad}"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems value="#{inscripcionController.enfermedades}"
+													var="e" itemLabel="#{e.nombre}"
+													itemValue="#{e.idenfermedad}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="Institución de Procedencia: " />
+											<p:selectOneMenu id="instprod"
+												value="#{inscripcionController.institucionProcedencia.idinsitucionprocedencia}"
+												required="true"
+												requiredMessage="La Institucion de preferencia es Requerida"
+												style="width:150px">
+												<f:selectItem itemLabel="Seleccionar" itemDisabled="true" />
+												<f:selectItems
+													value="#{inscripcionController.institucionesProcedencia}"
+													var="ip" itemLabel="#{ip.nombre}"
+													itemValue="#{ip.idinsitucionprocedencia}" />
+											</p:selectOneMenu>
+
+										</h:panelGrid>
+										<p:commandButton value="Finalizar"
+											actionListener="#{inscripcionController.save()}"
+											update=":formAlumnList" />
+									</p:panel>
+								</p:tab>
+							</p:wizard>
+					</h:form>
+					</p:dialog>
+					<h:form id="formAlumnList">
+					<p:growl id="messageGlobal" showDetail="true" />
+					<p:commandButton icon="ui-icon-plusthick"
+						value="Inscribir Estudiante" update=":formInscripcion"
+						actionListener="#{inscripcionController.preparedSave()}"/>
+					<p:dataGrid var="inscrip"
+							value="#{inscripcionController.inscripciones}" columns="1"
+							layout="grid" rows="4" paginator="true" id="listEstudiantes"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="4,8,16">
+							<f:facet name="header">
+                    Estudiantes Inscritos
+                </f:facet>
+							<p:panel style="text-align:center">
+								<p:panelGrid style="margin-top:20px">
+								<p:row>
+									<p:column rowspan="6">
+										<p:graphicImage name="images/avatar5.png"
+											library="omega-layout" height="75px" width="60px" />
+									</p:column>
+									<p:column style="font-weight: bold;">Nombres:</p:column>
+									<p:column>
+										<h:outputText value="#{inscrip.estudiante.persona.nombres}" />
+									</p:column>
+
+									<p:column style="font-weight: bold;">Apellidos:</p:column>
+									<p:column>
+										<h:outputText value="#{inscrip.estudiante.persona.apellidos}" />
+									</p:column>
+									<p:column rowspan="4">										
+										<p:commandButton id="btnSearch" icon="ui-icon ui-icon-search" actionListener="#{inscripcionController.verDetalles(inscrip.idinscripcion)}">
+											<p:tooltip for="btnSearch" position="left" value="Ver Detalles" />
+										</p:commandButton>
+										<p:commandButton id="btnEditIcon" icon="ui-icon-pencil">
+											<p:tooltip for="btnEditIcon" position="left" value="Editar" />
+										</p:commandButton>
+										<p:commandButton id="btnDeleteIcon" icon="ui-icon-trash">
+											<p:tooltip for="btnDeleteIcon" position="left"
+												value="Eliminar" />
+										</p:commandButton>
+									</p:column>
+								</p:row>
+
+								<p:row>
+										<p:column style="font-weight: bold;">Telefono:</p:column>
+										<p:column>
+											<h:outputText value="#{inscrip.estudiante.persona.telefono}" />
+										</p:column>
+										<p:column style="font-weight: bold;">Celular:</p:column>
+										<p:column>
+											<h:outputText value="#{inscrip.estudiante.persona.celular}" />
+										</p:column>
+									</p:row>
+									<p:row>
+
+										<p:column style="font-weight: bold;">Fecha de Nacimiento:</p:column>
+										<p:column>
+										<h:outputText
+											value="#{inscrip.estudiante.persona.fechaNacimiento}">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+										<p:column style="font-weight: bold;">Carnet:</p:column>
+										<p:column>
+											<h:outputText value="#{inscrip.estudiante.nie}" />
+										</p:column>
+									</p:row>
+							</p:panelGrid>
+							</p:panel>
+						</p:dataGrid>
+					</h:form>
+
+				<p:dialog id="dlgDetalles" header="Detalles del Alumno"
+					widgetVar="dlgDetalles" showEffect="explode" hideEffect="explode"
+					modal="true">
+					<h:form id="formDetalles">
+						<p:panelGrid columns="4" style="margin: 0 auto; font-size: 12px;">
+							<p:outputLabel value="Nombre estudiante:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.nombres} #{inscripcionController.inscripcion.estudiante.persona.apellidos}" />
+							<p:outputLabel value="Carnet" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.nie}" />
+							<p:outputLabel value="Telefono:" />
+							<h:outputText value="#{inscripcionController.inscripcion.estudiante.persona.telefono}" />
+							<p:outputLabel value="Celular" />
+							<h:outputText value="#{inscripcionController.inscripcion.estudiante.persona.celular}" />
+							<p:outputLabel value="Fecha de Nacimiento:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.fechaNacimiento}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<p:outputLabel value="Sexo:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.sexo eq 'M' ? 'Masculino' : 'Femenino'}" />
+							<p:outputLabel value="Nacionalidad:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.nacionalidad eq 'S' ? 'Salvadoreña' : 'Extranjera'}" />
+							<p:outputLabel value="Departamento:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.direccion.municipio.departamento.nombre}" />
+							<p:outputLabel value="Municipio:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.direccion.municipio.nombre}" />
+							<p:outputLabel value="Dirección:" />							
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.direccion.detalle}" />
+							<p:outputLabel value="Distancia en llegar:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.distanciaParaLlegar}" />
+							<p:outputLabel value="Zona:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.direccion.zona}" />
+							<p:outputLabel value="Medio de Transporte:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.persona.medioTransporte.nombre}" />
+							<p:outputLabel value="Nombre Responsable:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.nombres} #{inscripcionController.responsableEstudiante.responsable.persona.apellidos}" />
+							<p:outputLabel value="Parentezco:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.parentesco.nombre} " />
+							<p:outputLabel value="Telefono:" />
+							<h:outputText value="#{inscripcionController.responsableEstudiante.responsable.persona.telefono}" />
+							<p:outputLabel value="Celular" />
+							<h:outputText value="#{inscripcionController.responsableEstudiante.responsable.persona.celular}" />
+							<p:outputLabel value="Nacionalidad:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.nacionalidad eq 'S' ? 'Salvadoreña' : 'Extranjera'}" />
+							<p:outputLabel value="Medio de Transporte:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.medioTransporte.nombre}" />
+							<p:outputLabel value="Sexo:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.sexo eq 'M' ? 'Masculino' : 'Femenino'}" />
+							<p:outputLabel value="Correo Electronico:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.email}" />
+							<p:outputLabel value="Correo Electronico:" />
+							<h:outputText
+								value="#{inscripcionController.responsableEstudiante.responsable.persona.dui}" />
+							<p:outputLabel value="Año de estudio anterior:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.anioEstudioAnterior}" />
+							<p:outputLabel value="Modalidad:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.modalidad.nombre}" />
+							<p:outputLabel value="Especialidad:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.nivelEspecialidad.especialidad.nombre}" />
+							<p:outputLabel value="Nivel:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.nivelEspecialidad.nivel.nombre}" />
+							<p:outputLabel value="Repite Grado:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.repiteGrado eq 'S' ? 'Si' : 'No'}" />
+							<p:outputLabel value="Institución de procedencia:" />
+							<h:outputText
+								value="#{inscripcionController.inscripcion.estudiante.institucionprocedencia.nombre}" />		
+							<p:commandButton value="Cerrar"
+								onclick="PF('dlgDetalles').hide();" immediate="true" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+			</div>
+		</div>
+        
+    </ui:define>
+
+</ui:composition>

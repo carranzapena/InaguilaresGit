@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            	<div class="ui-g-12">
+                <h:form id="formUsuario">
+                    <div class="card">
+                    <h1>Administrar Usuarios</h1>
+                    <p>Se lleva el control de todos los usuarios.</p>
+                     <p:growl id="messageGlobal" showDetail="true" />
+                    <p:commandButton value="Agregar Usuario" icon="fa fa-user-plus" update=":formModificar" actionListener="#{usuarioViewController.prepareSave}"/>
+                        <p:dataTable var="usuario" value="#{usuarioViewController.usuarios}" widgetVar="WVUsuarios" rowKey="#{usuario.id}" reflow="true">
+                        	<p:ajax event="filter" ignoreAutoUpdate="true" />
+                            <f:facet name="header">Listado de usuarios</f:facet>
+                            <p:column headerText="Id" sortBy="#{usuario.id}">
+                                <h:outputText value="#{usuario.id}" />
+                            </p:column>
+
+                            <p:column headerText="Usuario" filterBy="#{usuario.identificador}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.identificador}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre" filterBy="#{usuario.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.nombre}" />
+                            </p:column>
+                            
+                            <p:column headerText="Tipo Sesión" filterBy="#{usuario.tipoSesion}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.tipoSesion}" />
+                            </p:column>
+							<p:column headerText="Fecha Modificación" sortBy="#{usuario.dateMod}">
+								<h:outputText value="#{usuario.dateMod}" >
+									<f:convertDateTime dateStyle="full" pattern="dd/MM/yyyy  HH:mm:ss a" locale="es_ES"/>
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Acción" style="text-align: center;">
+								<p:commandLink id="btnDeleteIcon" style="margin-right: 10px;"	actionListener="#{usuarioViewController.preparatedEliminar(usuario.id)}"
+						            update=":formEliminar">
+									<h:outputText class="fa fa-fw fa-times" />
+									<p:tooltip for="btnDeleteIcon" position="left" value="Eliminar" />
+								</p:commandLink>
+								<p:commandLink id="btnEditIcon" style="margin-right: 10px;"	
+								update=":dlgEditar :formModificar" actionListener="#{usuarioViewController.prepareEdit(usuario.id)}">
+									<h:outputText class="fa fa-fw fa-edit" />
+									<p:tooltip for="btnEditIcon" position="left" value="Editar" />
+								</p:commandLink>
+								<p:commandLink id="btnBackUp" style="margin-right: 10px;"
+									update=":dlgBackUp :formBackUp"
+									actionListener="#{usuarioViewController.getBackUpUsers(usuario.id)}">
+									<h:outputText class="fa fa-id-badge" />
+									<p:tooltip for="btnBackUp" position="left" value="Agregar Usuario BackUp" />
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>   
+                    </div>
+                 </h:form>
+                </div>
+
+			<p:dialog id="dlg2" header="Eliminar Datos" widgetVar="dlgEliminar"
+				showEffect="explode" hideEffect="explode" modal="true">
+
+				<h:form id="formEliminar">
+					<h:outputText
+						value="Desea eliminar el usuario #{usuarioViewController.usuario.identificador}?" />
+					<p:commandButton value="Si"
+						actionListener="#{usuarioViewController.eliminar()}"
+						update=":formUsuario" oncomplete="PF('dlgEliminar').hide();" />
+					<p:commandButton value="No"	
+						actionListener="#{usuarioViewController.limpiar()}"
+						oncomplete="PF('dlgEliminar').hide();" />
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dlgEditar" header="#{usuarioViewController.tipoOperacion} Usuario" widgetVar="dlgModificar" showEffect="explode"
+                  hideEffect="explode" modal="true">
+
+	            <h:form id="formModificar">
+	                <h:panelGroup style="">
+	                    <p:messages id="messagesM" autoUpdate="true"  closable="true" />
+	                </h:panelGroup>
+	                <p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px; border: 0;" >
+	                    <p:outputLabel value="Tipo de Sesión"/>
+						<p:selectOneMenu id="tipoSesion" autoWidth="false" required="true" requiredMessage="Tipo de Sesión es requerido" 
+							value="#{usuarioViewController.usuario.tipoSesion}" onchange="changeZone()">
+							  <p:ajax event="change" update="pass" />
+							  <f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+							<f:selectItem itemLabel="Usuario de Windows" itemValue="LDAP"  />
+							<f:selectItem itemLabel="Usuario Sistema" itemValue="SYS" />
+						</p:selectOneMenu>					
+						<p:outputLabel value="Usuario"/>
+	                    <p:inputText id="user"  maxlength="40" value="#{usuarioViewController.usuario.identificador}"  required="true" requiredMessage="Identificador es requerido">
+	                    	<p:ajax event="blur"  listener="#{usuarioViewController.getUserName()}" />
+	                    	<p:watermark for="user" value="user.123" id="userWM" />
+	                    </p:inputText>
+	                    <p:outputLabel value="Nombre"/>
+	                    <p:inputText id="name"  maxlength="50" value="#{usuarioViewController.usuario.nombre}"  required="true" requiredMessage="Nombre es requerido">
+	                    	<p:watermark for="name" value="Nombre del usuario" id="nameWM" />
+	                    </p:inputText>                                                                
+					    <p:outputLabel value="Contraseña" />
+	                    <p:password id="pass" disabled="#{usuarioViewController.usuario.tipoSesion eq 'LDAP'}"  maxlength="100" value="#{usuarioViewController.usuario.contrasenia}" required="#{usuarioViewController.usuario.tipoSesion eq 'SYS'}" requiredMessage="Contraseña es requerida">
+	                    	<p:watermark for="pass" value="********" id="passWM" />
+	                    </p:password>                                                                    
+	                    <p:commandButton value="Guardar Cambios" update="formModificar" actionListener="#{usuarioViewController.validarTipoOperacion}" />                    
+	                    <p:commandButton value="Cancelar" immediate="true" actionListener="#{usuarioViewController.limpiar()}" oncomplete="PF('dlgModificar').hide();"/>
+	                </p:panelGrid> 
+	                <p:remoteCommand name="changeZone" process="@this tipoSesion"  update="formModificar">
+	  							 <p:resetInput target="formModificar" />
+					</p:remoteCommand>  	                             
+	            </h:form>
+	        </p:dialog>
+
+			<p:dialog id="dlgBackUp"
+				header="Asignar Usuario BackUp"
+				widgetVar="WvBackUp" showEffect="explode" hideEffect="explode"
+				modal="true">
+
+				<h:form id="formBackUp">
+					<h:panelGroup style="">
+						<p:messages id="messagesB" autoUpdate="true" closable="true" />
+					</h:panelGroup>
+					<p:panelGrid columns="2"
+						style="margin: 0 auto; font-size: 12px;">
+						<p:outputLabel value="Usuario BackUp" />
+						<p:selectOneMenu id="userBackUp" autoWidth="false" required="true"
+							requiredMessage="Usuario BackUp es requerido"
+							value="#{usuarioViewController.usuario.idUserBackup}" filter="true" filterMatchMode="startsWith" effect="fade">
+							<f:selectItem itemLabel="Seleccione" itemDisabled="true" />
+							<f:selectItems value="#{usuarioViewController.usuariosBackUp}" var="usBK" itemLabel="#{usBK.identificador} --- #{usBK.nombre}" itemValue="#{usBK.id}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Fecha Fin BackUp" />
+						<p:calendar id="ffbackup"
+							value="#{usuarioViewController.usuario.fechaFinBackup}"
+							required="true" requiredMessage="Fecha Fin BackUp es requerido" pattern="dd/MM/yyyy" showOn="button">
+							<p:watermark for="ffbackup" value="DD/MM/YYYY" id="ffbackupWM" />
+						</p:calendar>
+						<p:commandButton value="Agregar" update="formBackUp" actionListener="#{usuarioViewController.editar()}" />                    
+	                    <p:commandButton value="Cancelar" immediate="true" actionListener="#{usuarioViewController.limpiar()}" oncomplete="PF('WvBackUp').hide();"/>
+	                </p:panelGrid> 
+				</h:form>
+			</p:dialog>
+
+		</div>
+        
+    </ui:define>
+
+</ui:composition>

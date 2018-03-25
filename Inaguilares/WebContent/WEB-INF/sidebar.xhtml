@@ -1,0 +1,40 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:po="http://primefaces.org/omega">
+
+    <div class="sidebar">
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="logo">
+                    <p:graphicImage name="images/logo.png" library="omega-layout" width="113"/>
+                </div>
+
+                <div class="profile">
+                    <p:graphicImage name="images/profile.png" library="omega-layout" />
+                    <a id="profile-button" href="#">
+                        <span class="username">#{inscripcionController.usuario.usuario}</span>
+                        <i class="fa fa-fw fa-cog"></i>
+                    </a>
+                    <ul>                  
+                        <h:form><li><h:commandLink actionListener="#{login.logout()}"><i class="fa fa-fw fa-sign-out"></i><span>Cerrar Sesión</span></h:commandLink></li></h:form>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                <h:form>
+                	<po:menu>
+                       <p:menuitem id="inscripcion" value="Inscripción" icon="fa fa-home" outcome="/Vistas/inscripcion.xhtml" />
+					</po:menu>
+
+					
+				</h:form>
+				</div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

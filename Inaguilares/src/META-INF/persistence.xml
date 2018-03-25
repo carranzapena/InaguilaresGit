@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="Inaguilares" transaction-type="JTA">
+		<jta-data-source>jdbc/aguilares</jta-data-source>
+<!--  <persistence-unit name="Inaguilares" transaction-type="RESOURCE_LOCAL"> -->
+<!--     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> -->
+<!--     <non-jta-data-source>java:comp/env/jdbc/aguilares</non-jta-data-source>         -->
+		<class>sv.com.institucion.entidades.Amonestacion</class>
+		<class>sv.com.institucion.entidades.Asignatura</class>
+		<class>sv.com.institucion.entidades.Asignaturaimpartir</class>
+		<class>sv.com.institucion.entidades.Asistencia</class>
+		<class>sv.com.institucion.entidades.Aula</class>
+		<class>sv.com.institucion.entidades.Catalogoasistencia</class>
+		<class>sv.com.institucion.entidades.DatosHistorico</class>
+		<class>sv.com.institucion.entidades.Departamento</class>
+		<class>sv.com.institucion.entidades.DetalleHistorico</class>
+		<class>sv.com.institucion.entidades.Detallehorario</class>
+		<class>sv.com.institucion.entidades.Dia</class>
+		<class>sv.com.institucion.entidades.Direccion</class>
+		<class>sv.com.institucion.entidades.Docente</class>
+		<class>sv.com.institucion.entidades.Enfermedad</class>
+		<class>sv.com.institucion.entidades.Especialidad</class>
+		<class>sv.com.institucion.entidades.EstadoCivil</class>
+		<class>sv.com.institucion.entidades.Estadoinscripcion</class>
+		<class>sv.com.institucion.entidades.Estudiante</class>
+		<class>sv.com.institucion.entidades.Evaluacion</class>
+		<class>sv.com.institucion.entidades.Evalucacione</class>
+		<class>sv.com.institucion.entidades.Expediente</class>
+		<class>sv.com.institucion.entidades.ExpedienteMedico</class>
+		<class>sv.com.institucion.entidades.Falta</class>
+		<class>sv.com.institucion.entidades.Grado</class>
+		<class>sv.com.institucion.entidades.Gradoseccion</class>
+		<class>sv.com.institucion.entidades.Gravedad</class>
+		<class>sv.com.institucion.entidades.Inscripcion</class>
+		<class>sv.com.institucion.entidades.InscripcionHorario</class>
+		<class>sv.com.institucion.entidades.Institucionprocedencia</class>
+		<class>sv.com.institucion.entidades.MedioTransporte</class>
+		<class>sv.com.institucion.entidades.Modalidad</class>
+		<class>sv.com.institucion.entidades.Municipio</class>
+		<class>sv.com.institucion.entidades.Nivel</class>
+		<class>sv.com.institucion.entidades.NivelEspecialidad</class>
+		<class>sv.com.institucion.entidades.Opcion</class>
+		<class>sv.com.institucion.entidades.OpcionRol</class>
+		<class>sv.com.institucion.entidades.OpcionUsuario</class>
+		<class>sv.com.institucion.entidades.ParametrosGenerale</class>
+		<class>sv.com.institucion.entidades.Parentesco</class>
+		<class>sv.com.institucion.entidades.Periodo</class>
+		<class>sv.com.institucion.entidades.Persona</class>
+		<class>sv.com.institucion.entidades.Responsable</class>
+		<class>sv.com.institucion.entidades.ResponsableEstudiante</class>
+		<class>sv.com.institucion.entidades.Rol</class>
+		<class>sv.com.institucion.entidades.SancionesHistorica</class>
+		<class>sv.com.institucion.entidades.Seccion</class>
+		<class>sv.com.institucion.entidades.Tipofalta</class>
+		<class>sv.com.institucion.entidades.Usuario</class>
+		<class>sv.com.institucion.entidades.UsuarioRol</class>
+	</persistence-unit>
+</persistence>
