@@ -67,7 +67,7 @@ public class UsuarioDao extends FabricaAbstracta<Usuario> {
             		.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
             q.setParameter("estadoVar",n);
             q.setParameter("us", u.getUsuario());
-        	logger.error("Parametros: "+u.getUsuario()+"  "+n);
+        	logger.info("Parametros: "+u.getUsuario()+"  "+n);
             Usuario us=(Usuario) q.getSingleResult();
             if(us!=null){
                 isactivo=true;

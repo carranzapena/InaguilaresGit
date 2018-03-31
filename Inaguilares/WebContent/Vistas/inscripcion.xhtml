@@ -304,6 +304,7 @@
 					<p:commandButton icon="ui-icon-plusthick"
 						value="Inscribir Estudiante" update=":formInscripcion"
 						actionListener="#{inscripcionController.preparedSave()}"/>
+					<p:separator />
 					<p:dataGrid var="inscrip"
 							value="#{inscripcionController.inscripciones}" columns="1"
 							layout="grid" rows="4" paginator="true" id="listEstudiantes"

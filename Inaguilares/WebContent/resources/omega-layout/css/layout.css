@@ -3444,3 +3444,6 @@ a.ui-commandlink, a.ui-link {
 .disable-scroll .ui-dialog-content {
   overflow: hidden !important;
 }
+.center{
+	text-align: center;
+}

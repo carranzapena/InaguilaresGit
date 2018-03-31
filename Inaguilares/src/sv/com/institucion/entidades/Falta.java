@@ -2,6 +2,10 @@ package sv.com.institucion.entidades;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -10,6 +14,8 @@ import java.util.List;
  * The persistent class for the falta database table.
  * 
  */
+@ToString
+@EqualsAndHashCode
 @Entity
 @NamedQuery(name="Falta.findAll", query="SELECT f FROM Falta f")
 public class Falta implements Serializable {
