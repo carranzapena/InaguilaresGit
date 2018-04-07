@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/template.xhtml">>
+
+    <ui:define name="content">
+
+		<div class="ui-fluid">
+			<div class="ui-g">
+
+				<div class="ui-g-12">
+					<div class="card">
+						<h1>Parametros Generales</h1>
+						<h:form id="formParametro">
+							<p:commandButton icon="ui-icon-plusthick"
+								value="Agregar Parametro" update=":formModificar"
+								actionListener="#{parametrosController.prepareSave()}" />
+						</h:form>
+					</div>
+				</div>
+				<div class="ui-g-12">
+					<div class="card">
+						<h:form id="parametrosList">
+							<p:dataTable var="parametro" id="tableParametros"
+								widgetVar="wvtableParametros"
+								value="#{parametrosController.parametros}"
+								filteredValue="#{parametrosController.parametrosFiltrados}"
+								paginator="true" rows="4" rowKey="#{parametro.idparametro}"
+								selectionMode="single" selection="#{parametrosController.selected}"  
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="4,8,12">
+								<p:ajax event="filter" ignoreAutoUpdate="true" />
+								<p:column headerText="Codigo" filterBy="#{parametro.llave}"
+									filterMatchMode="contains">
+									<h:outputText value="#{parametro.llave}" />
+								</p:column>
+								<p:column headerText="Valor" filterBy="#{parametro.valor}"
+									filterMatchMode="contains">
+									<h:outputText value="#{parametro.valor}" />
+								</p:column>
+								<p:column headerText="Descripcion"
+									filterBy="#{parametro.descripcion}" filterMatchMode="contains">
+									<h:outputText value="#{parametro.descripcion}" />
+								</p:column>
+							</p:dataTable>
+							<p:contextMenu for="tableParametros" id="ctxmn">
+								<p:menuitem value="Eliminar" update=":dlg2 :formEliminar"
+									icon="fa fa-times"
+									actionListener="#{parametrosController.preparatedEliminar}" />
+								<p:menuitem value="Actualizar" update=":dlgEditar :formModificar"
+									icon="fa fa-pencil-square-o"
+									actionListener="#{parametrosController.prepareEdit}" />
+							</p:contextMenu>
+						</h:form>
+					</div>
+				</div>
+
+				<p:dialog id="dlg2" header="Eliminar Datos" widgetVar="dlgEliminar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formEliminar">
+						<h:outputText value="Desea eliminar el parametro?" />
+						<p:separator />
+						<p:panelGrid columns="2">
+							<p:commandButton value="Si"
+								actionListener="#{parametrosController.eliminar()}"
+								update=":parametrosList" oncomplete="PF('dlgEliminar').hide();" />
+							<p:commandButton value="No"
+								oncomplete="PF('dlgEliminar').hide();" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+				<p:dialog id="dlgEditar"
+					header="#{parametrosController.tipoOperacion} Parametro"
+					widgetVar="dlgModificar" showEffect="explode" hideEffect="explode"
+					modal="true">
+
+					<h:form id="formModificar">
+						<h:panelGroup style="">
+							<p:messages id="messagesM" autoUpdate="true" closable="true" />
+						</h:panelGroup>
+						<p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px;">
+							<p:outputLabel value="Codigo" />
+							<p:inputText id="codigo" size="50" maxlength="20"
+								value="#{parametrosController.parametro.llave}" required="true"
+								requiredMessage="Codigo Requerido" />
+							<p:outputLabel value="Valor" />
+							<p:inputText id="valor" size="50" maxlength="350"
+								value="#{parametrosController.parametro.valor}" required="true"
+								requiredMessage="Valor es Requerido" />
+							<p:outputLabel value="Descripción" />
+							<p:inputTextarea maxlength="500" autoResize="true" cols="50"
+								id="descripcion"
+								value="#{parametrosController.parametro.descripcion}"
+								required="true" requiredMessage="Descripcion es Requerida" />
+							<p:commandButton value="Cancelar"
+								oncomplete="PF('dlgModificar').hide();" immediate="true" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{parametrosController.validarTipoOperacion()}"
+								update=":parametrosList:tableParametros :formModificar " />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>
+

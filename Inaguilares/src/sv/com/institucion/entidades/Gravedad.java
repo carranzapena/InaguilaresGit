@@ -2,6 +2,9 @@ package sv.com.institucion.entidades;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import lombok.EqualsAndHashCode;
+
 import java.util.List;
 
 
@@ -9,6 +12,7 @@ import java.util.List;
  * The persistent class for the gravedad database table.
  * 
  */
+@EqualsAndHashCode
 @Entity
 @NamedQuery(name="Gravedad.findAll", query="SELECT g FROM Gravedad g")
 public class Gravedad implements Serializable {

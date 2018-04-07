@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+		<div class="ui-fluid">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card">
+						<h:form id="formAmonestacion">
+							<h1>Amonestaciones</h1>
+							<p:panelGrid columns="4"
+								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+								layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+								<p:outputLabel for="fecha" value="Fecha:" />
+								<p:calendar id="fecha" value="#{amonestacionController.fecha}"
+									maxdate="#{amonestacionController.fechaAhora}"
+									pattern="dd/MM/yyyy">
+									<p:watermark value="dd/MM/yyyy" for="fecha" />
+								</p:calendar>
+								<p:outputLabel for="nombreEst" value="Estudiante:" />
+								<p:autoComplete id="nombreEst" minQueryLength="3"
+									value="#{amonestacionController.carnet}"
+									completeMethod="#{amonestacionController.completeText}"
+									var="crt"
+									itemLabel="#{crt.estudiante.persona.nombres} #{crt.estudiante.persona.apellidos}"
+									itemValue="#{crt.estudiante.nie}" >
+									<p:watermark value="Nombre" for="nombreEst" />
+								</p:autoComplete>
+								<p:outputLabel for="estado" value="Estado:" />
+								<p:selectOneMenu id="estado"
+									value="#{amonestacionController.estado}">
+									<f:selectItem itemLabel="Seleccionar uno" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItem itemLabel="Activa" itemValue="A" />
+									<f:selectItem itemLabel="Anulada" itemValue="N" />
+								</p:selectOneMenu>
+								<p:commandButton value="Buscar" icon="fa fa-search"
+									actionListener="#{amonestacionController.searchByFilter()}"
+									update="formAmonestacion :amonestacionList" />
+								<p:commandButton value="Agregar" icon="ui-icon-plusthick"
+									actionListener="#{amonestacionController.prepareSave()}"
+									update=":formModificar" />
+							</p:panelGrid>
+						</h:form>
+					</div>
+				</div>
+				<div class="card">
+					<h:form id="amonestacionList">
+						<p:dataTable var="amonestacion" id="tableAmonestacion"
+							widgetVar="wvtableAmonestacion"
+							value="#{amonestacionController.amonestaciones}"
+							selectionMode="single" selection="#{amonestacionController.selected}" rowKey="#{amonestacion.idamonestacion}"							
+							filteredValue="#{amonestacionController.amonestacionesFiltradas}"
+							paginator="true" rows="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15">
+							 <f:facet name="header">Listado Amonestaciones</f:facet>
+							<p:ajax event="filter" ignoreAutoUpdate="true"  />							
+							<p:column headerText="Carnet" styleClass="center">
+								<h:outputText value="#{amonestacion.expediente.estudiante.nie}" />
+							</p:column>
+							<p:column headerText="Nombre" styleClass="center">
+								<h:outputText
+									value="#{amonestacion.expediente.estudiante.persona.nombres} #{amonestacion.expediente.estudiante.persona.apellidos}" />
+							</p:column>
+							<p:column headerText="Fecha" styleClass="center">
+								<h:outputText value="#{amonestacion.fecha}">
+								 		<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Falta" styleClass="center">
+								<h:outputText value="#{amonestacion.falta.tipofalta.nombre}" />
+							</p:column>
+							<p:column headerText="Estado" styleClass="center">
+								<p:inputSwitch value="#{amonestacion.estadoBooleano}" offLabel="Desactivada" onLabel="Activa">
+						             <p:ajax listener="#{amonestacionController.cambiarEstado(amonestacion)}" update=":messageGlobal" />
+						        </p:inputSwitch>
+							</p:column>
+						</p:dataTable>
+
+						<p:contextMenu for="tableAmonestacion" id="ctxmn" >
+							<p:menuitem value="Ver Detalles" update=":formDetalles" icon="fa fa-search-plus" actionListener="#{amonestacionController.mostrarDetalles}" />
+							<p:menuitem value="Actualizar" update=":dlgEditar" icon="fa fa-pencil-square-o" actionListener="#{amonestacionController.preEditar}" />
+							
+						</p:contextMenu>
+						
+					</h:form> 
+				</div>
+				<p:dialog id="dlgEditar"
+					header="#{amonestacionController.tipoOperacion} Amonestacion"
+					widgetVar="dlgModificar" showEffect="explode" hideEffect="explode"
+					modal="true" position="center" style="margin-left: -12em;">
+					<h:form id="formModificar">
+						<h:panelGroup style="">
+							<p:messages id="messagesM" closable="true" />
+						</h:panelGroup>
+						<p:panelGrid columns="2" 
+								columnClasses="ui-grid-col-12"
+								styleClass="ui-panelgrid-blank">
+							<p:outputLabel value="Nombre estudiante:" />
+							<p:selectOneMenu value="#{amonestacionController.idExpediente}"
+								required="true" requiredMessage="Estudiante es requerido"
+								filter="true" filterMatchMode="startsWith" >
+								<f:selectItem itemLabel="Selecciona Estudiante" itemValue="" />
+								<f:selectItems value="#{amonestacionController.expedientes}"
+									var="expediente"
+									itemLabel="#{expediente.estudiante.persona.nombres} 
+                                            #{expediente.estudiante.persona.apellidos}"
+									itemValue="#{expediente.idExpediente}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Falta:" />
+							<p:selectOneMenu id="faltaA"
+								value="#{amonestacionController.idFalta}" required="true"
+								requiredMessage="Falta es requerido" filter="true"
+								filterMatchMode="startsWith">
+								<f:selectItem itemLabel="Selecciona Falta" itemValue="" />
+								<f:selectItems value="#{amonestacionController.faltas}"
+									var="falta" itemLabel="#{falta.tipofalta.nombre}"
+									itemValue="#{falta.idfalta}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Descripción:" />
+							<p:inputTextarea  id="descripcion"
+								autoResize="true"
+								value="#{amonestacionController.amonestacion.descripcion}"
+								maxlength="500" required="true"
+								requiredMessage="Descripción es requerida">
+								<p:watermark value="Descripción de la amonestación"
+									for="descripcion" />
+							</p:inputTextarea>
+							<p:commandButton value="Cancelar"
+								oncomplete="PF('dlgModificar').hide();" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{amonestacionController.validarTipoOperacion()}"
+								update=":amonestacionList:tableAmonestacion :formModificar" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+				<p:dialog id="dlgDetalles" header="Detalles Amonestacion"
+					widgetVar="dlgDetalles" showEffect="explode" hideEffect="explode"
+					modal="true">
+					<h:form id="formDetalles">
+						<p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px;">
+							<p:outputLabel value="Carnet" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.expediente.estudiante.nie}" />
+							<p:outputLabel value="Nombre estudiante" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.expediente.estudiante.persona.nombres} #{amonestacionController.amonestacion.expediente.estudiante.persona.apellidos}" />
+							<p:outputLabel value="Fecha" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.fecha}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<p:outputLabel value="Tipo Falta" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.falta.tipofalta.nombre}" />
+							<p:outputLabel value="Descripcion" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.descripcion}" />
+							<p:outputLabel value="Estado" />
+							<h:outputText
+								value="#{amonestacionController.amonestacion.estado eq 'A' ? 'Activa' : 'Anulada'}" />
+							<p:commandButton value="Cerrar"  
+								oncomplete="PF('dlgDetalles').hide();" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>
+

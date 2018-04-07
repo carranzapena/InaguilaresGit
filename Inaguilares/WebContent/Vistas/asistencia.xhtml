@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="content">
+		<div class="ui-fluid">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card">
+						<h1>Asistencia</h1>
+						<h:form id="formAsistencia">
+							<p:panelGrid columns="4"
+								columnClasses="ui-grid-col-2"
+								layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+								<p:outputLabel for="fecha" value="Fecha:" />
+								<p:calendar id="fecha" value="#{asistenciaController.fecha}"
+									maxdate="#{asistenciaController.hoy}" pattern="dd/MM/yyyy"
+									required="true" requiredMessage="Fecha es requerida" />
+								<p:commandButton value="Buscar" icon="fa fa-search"
+									actionListener="#{asistenciaController.searchByDate()}"
+									update=":formAsistencia :asistenciaList" />
+							</p:panelGrid>
+						</h:form>
+					</div>
+				</div>
+				<div class="ui-g-12">
+					<div class="card">
+						<h:form id="asistenciaList">
+							<p:commandButton value="Refrescar" icon="fa fa-refresh"
+								actionListener="#{asistenciaController.init}"
+								update="asistenciaList :formAsistencia" />
+							<p:dataTable var="asistencia" id="tableAsistencia"
+								value="#{asistenciaController.asistencias}" paginator="true"
+								rows="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<p:column headerText="Carnet">
+									<h:outputText value="#{asistencia.expediente.estudiante.nie}" />
+								</p:column>
+								<p:column headerText="Nombre">
+									<h:outputText
+										value="#{asistencia.expediente.estudiante.persona.nombres} #{asistencia.expediente.estudiante.persona.apellidos}" />
+								</p:column>
+								<p:column headerText="Fecha">
+									<h:outputText value="#{asistencia.fecha}">
+										<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Hora">
+									<h:outputText value="#{asistencia.hora}">
+										<f:convertDateTime type="time" pattern="hh:mm:ss aa" />
+									</h:outputText>
+								</p:column>
+
+							</p:dataTable>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>
+

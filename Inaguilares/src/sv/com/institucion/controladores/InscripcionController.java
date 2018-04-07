@@ -177,7 +177,7 @@ public class InscripcionController implements Serializable {
 	}finally{
 		init();
         FacesContext.getCurrentInstance().addMessage("messageGlobal", message);
-        RequestContext.getCurrentInstance().update("formAlumnList");
+        RequestContext.getCurrentInstance().update("messageGlobal");
 	}
 	
   }
@@ -197,6 +197,7 @@ public class InscripcionController implements Serializable {
 		} finally {
 			FacesContext.getCurrentInstance().addMessage("messageGlobal", message);
 			RequestContext.getCurrentInstance().update("formDetalles");
+			RequestContext.getCurrentInstance().update("messageGlobal");
 		}
 	}
   

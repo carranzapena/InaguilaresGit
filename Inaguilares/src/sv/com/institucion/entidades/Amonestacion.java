@@ -69,6 +69,17 @@ public class Amonestacion implements Serializable {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	
+	public boolean getEstadoBooleano() {
+		return this.estado.equals("A")?true:false;
+	}
+
+	public void setEstadoBooleano(boolean estado) {
+		if(estado)
+			setEstado("A");
+		else
+			setEstado("N");
+	}
 
 	public Date getFecha() {
 		return this.fecha;

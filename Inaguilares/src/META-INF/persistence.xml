@@ -42,7 +42,7 @@
 		<class>sv.com.institucion.entidades.Opcion</class>
 		<class>sv.com.institucion.entidades.OpcionRol</class>
 		<class>sv.com.institucion.entidades.OpcionUsuario</class>
-		<class>sv.com.institucion.entidades.ParametrosGenerale</class>
+		<class>sv.com.institucion.entidades.ParametrosGenerales</class>
 		<class>sv.com.institucion.entidades.Parentesco</class>
 		<class>sv.com.institucion.entidades.Periodo</class>
 		<class>sv.com.institucion.entidades.Persona</class>

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+
+		<div class="ui-fluid">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card">
+						<h1>Faltas</h1>
+						<h:form id="formFalta">
+							<p:commandButton icon="ui-icon-plusthick" value="Agregar Falta"
+								update=":formModificar"
+								actionListener="#{faltasController.prepareSave()}" />
+						</h:form>
+					</div>
+				</div>
+				<div class="ui-g-12">
+					<div class="card">
+				<h:form id="faltasList">
+					<p:dataTable id="tableFaltas" var="falta" value="#{faltasController.faltas}" 	  
+					    widgetVar="wvtableFaltas" rows="20" paginator="true" 
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="20,40,60" 
+					    selectionMode="single" selection="#{faltasController.selected}" rowKey="#{falta.idfalta}"					
+						emptyMessage="No hay faltas a mostrar" filteredValue="#{faltasController.faltasFiltradas}">
+						<p:ajax event="filter" ignoreAutoUpdate="true"  />
+						<p:column headerText="Tipo Falta"
+							filterBy="#{falta.tipofalta.nombre}" filterMatchMode="contains">
+							<h:outputText value="#{falta.tipofalta.nombre}" />
+						</p:column>
+						<p:column filterBy="#{falta.gravedad.nombre}" sortBy="#{falta.gravedad.nombre}"
+							headerText="Gravedad" style="text-align: center;"
+							filterMatchMode="exact">
+							<f:facet name="filter">
+								<p:selectOneMenu onchange="PF('wvtableFaltas').filter()"  >
+									<f:selectItem itemLabel="Seleccione uno" itemValue="#{null}" noSelectionOption="true" />
+									<f:selectItems value="#{faltasController.gravedades}" var="gra"
+										itemLabel="#{gra.nombre}" itemValue="#{gra.nombre}" />
+								</p:selectOneMenu>
+							</f:facet>
+							<h:outputText value="#{falta.gravedad.nombre}" />
+						</p:column>
+					</p:dataTable>
+					<p:contextMenu for="tableFaltas" id="ctxmn" >
+						<p:menuitem value="Eliminar" update=":dlg2 :formEliminar" icon="fa fa-times" actionListener="#{faltasController.preparatedEliminar}" />
+						<p:menuitem value="Actualizar" update=":dlgEditar" icon="fa fa-pencil-square-o" actionListener="#{faltasController.prepareEdit}" />
+					</p:contextMenu>					
+				</h:form>
+				</div>
+				</div>
+				<p:dialog id="dlg2" header="Eliminar Datos" widgetVar="dlgEliminar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formEliminar">
+						<h:outputText
+							value="Desea eliminar la falta?" />
+							<p:separator />
+							<p:panelGrid columns="2">
+							<p:commandButton value="Si"
+								actionListener="#{faltasController.eliminar()}"
+								update=":formFalta"  />
+							<p:commandButton value="No"
+								actionListener="#{faltasController.limpiar()}"
+								oncomplete="PF('dlgEliminar').hide();" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+				<p:dialog id="dlgEditar"
+					header="#{faltasController.tipoOperacion} Falta"
+					widgetVar="dlgModificar" showEffect="explode" hideEffect="explode"
+					modal="true">
+					<h:form id="formModificar">
+						<h:panelGroup style="">
+							<p:messages id="messagesM" autoUpdate="true" closable="true" />
+						</h:panelGroup>
+						<p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px;">
+							<p:outputLabel value="Tipo Falta" />
+							<p:inputText id="tipoFalta" size="150" maxlength="150"
+								value="#{faltasController.tipoFalta.nombre}" required="true"
+								requiredMessage="Tipo Falta Requerido" />
+							<p:outputLabel value="Gravedad:" />
+							<p:selectOneMenu  id="gravedad"
+								value="#{faltasController.idGravedad}"
+								required="true" requiredMessage="Gravedad es requerido">
+								<f:selectItem itemLabel="Selecciona Gravedad" itemValue="" />
+								<f:selectItems value="#{faltasController.gravedades}"
+									var="gravedad" itemLabel="#{gravedad.nombre}"
+									itemValue="#{gravedad.idgravedad}" />
+							</p:selectOneMenu>
+
+							<p:commandButton value="Cancelar"
+								oncomplete="PF('dlgModificar').hide();"/>
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{faltasController.validarTipoOperacion()}"
+								update=":formModificar" />
+
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>
+

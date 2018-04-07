@@ -33,6 +33,7 @@ public class Login implements Serializable {
 	public static final Logger logger = Logger.getLogger(Login.class);
 //	private MenuModel model;
 	private UsuarioDao usuarioDao;
+    private boolean banderaHilo = false;
 	
     @PostConstruct
     public void init() {    	

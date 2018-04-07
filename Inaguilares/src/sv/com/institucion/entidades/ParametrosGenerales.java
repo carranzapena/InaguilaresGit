@@ -10,8 +10,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="parametros_generales")
-@NamedQuery(name="ParametrosGenerale.findAll", query="SELECT p FROM ParametrosGenerale p")
-public class ParametrosGenerale implements Serializable {
+@NamedQuery(name="ParametrosGenerale.findAll", query="SELECT p FROM ParametrosGenerales p")
+public class ParametrosGenerales implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -24,7 +24,7 @@ public class ParametrosGenerale implements Serializable {
 
 	private String valor;
 
-	public ParametrosGenerale() {
+	public ParametrosGenerales() {
 	}
 
 	public int getIdparametro() {
