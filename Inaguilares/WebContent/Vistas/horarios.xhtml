@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="content">
+		<div class="ui-fluid">
+			<div class="ui-g">
+
+				<div class="ui-g-12">
+					<div class="card">
+						<h1>Horarios</h1>
+						<h:form id="formHorario">
+							<p:commandButton icon="ui-icon-plusthick" value="Nuevo Horario"
+								update=":formModificar"
+								actionListener="#{horarioController.cancelar()}"
+								oncomplete="PF('dlgModificar').show();" />
+						</h:form>
+					</div>
+				</div>
+
+				<div class="ui-g-12">
+					<div class="card">
+						<h:form id="formMostrarHorario">
+							<p:dataTable id="tablaMostrarHorarios" var="hor" widgetVar="wvhorarios"
+								value="#{horarioController.detallesHorarios}"
+								emptyMessage="No hay datos de horarios" paginator="true"
+								rows="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15" selectionMode="single"
+								selection="#{horarioController.selected}"
+								rowKey="#{hor.iddetallehorario}">
+
+								<p:column headerText="Materia a Impartir" styleClass="center"
+									filterBy="#{hor.asignaturaimpartir.asignatura.nombre} #{hor.asignaturaimpartir.docente.persona.nombres} #{hor.asignaturaimpartir.docente.persona.apellidos}"
+									filterStyle="width:100px;" filterMatchMode="contains">
+									<h:outputText
+										value="Materia: #{hor.asignaturaimpartir.asignatura.nombre} Docente: #{hor.asignaturaimpartir.docente.persona.nombres} #{hor.asignaturaimpartir.docente.persona.apellidos}" />
+								</p:column>
+
+								<p:column headerText="Aula a Asignar" styleClass="center"
+									filterBy="#{hor.aula.codigo}" filterStyle="width:100px;"
+									filterMatchMode="contains">
+									<h:outputText value="#{hor.aula.codigo}" />
+								</p:column>
+
+								<p:column headerText="Grado y Seccion" styleClass="center"
+									filterBy="#{hor.gradoseccion.grado.nombre} #{hor.gradoseccion.seccion.codigo}"
+									filterStyle="width:100px;" filterMatchMode="contains">
+									<h:outputText
+										value="GRADO: #{hor.gradoseccion.grado.nombre} SECCION: #{hor.gradoseccion.seccion.codigo}" />
+								</p:column>
+
+								<p:column headerText="Hora de Inicio - Hora Fin" styleClass="center"
+									filterBy="#{hor.horainicio.hours}:#{hor.horainicio.minutes} #{hor.horafin.hours}:#{hor.horafin.minutes}"
+									filterStyle="width:100px;" filterMatchMode="contains">
+									<h:outputText
+										value="#{hor.horainicio.hours}:#{hor.horainicio.minutes} - #{hor.horafin.hours}:#{hor.horafin.minutes}" />
+								</p:column>
+							</p:dataTable>
+							<p:contextMenu for="tablaMostrarHorarios" id="ctxmn">
+								<p:menuitem value="Eliminar" update=":formEliminar"
+									icon="fa fa-times"
+									actionListener="#{horarioController.prepareHorario()}"
+									oncomplete="PF('dlgEliminar').show();" />
+								<p:menuitem value="Actualizar" update=":formModificar"
+									icon="fa fa-pencil-square-o"
+									actionListener="#{horarioController.prepareHorario()}"
+									oncomplete="PF('dlgModificar').show();" />
+							</p:contextMenu>
+						</h:form>
+					</div>
+				</div>
+
+				<p:dialog id="dlg" header="Modificar Datos" widgetVar="dlgModificar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formModificar">
+						<h:panelGroup style="">
+							<p:messages id="messagesM" autoUpdate="true" closable="true" />
+						</h:panelGroup>
+						<p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px;">
+							<p:outputLabel value="Materia a Impartir:" />
+							<p:selectOneMenu id="cboMateria"
+								value="#{horarioController.asigImpartir.idasignaturaimpartir}"
+								required="true"
+								requiredMessage="El Nombre de la Materia es Obligatorio">
+								<f:selectItem itemLabel="Seleccione Materia" itemValue="" />
+								<f:selectItems
+									value="#{horarioController.asignaturasImpartidas}" var="asig"
+									itemLabel="#{asig.asignatura.nombre} - #{asig.docente.persona.nombres} #{asig.docente.persona.apellidos}"
+									itemValue="#{asig.idasignaturaimpartir}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Aula a Asignar" />
+							<p:selectOneMenu id="cboAula"
+								value="#{horarioController.aula.idaula}" required="true"
+								requiredMessage="La Aula es Obligatoria">
+								<f:selectItem itemLabel="Seleccione Aula" itemValue="" />
+								<f:selectItems value="#{horarioController.aulas}" var="aula"
+									itemLabel="#{aula.codigo}" itemValue="#{aula.idaula}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Grado y Seccion:" />
+							<p:selectOneMenu id="cboGS"
+								value="#{horarioController.gradoseccion.idgradoseccion}"
+								required="true"
+								requiredMessage="El Año y la Sección son Obligatorios">
+								<f:selectItem itemLabel="Seleccione Grado y Sección" itemValue="" />
+								<f:selectItems value="#{horarioController.grados}" var="gs"
+									itemLabel="AÑO: #{gs.grado.nombre} SECCION: #{gs.seccion.codigo}"
+									itemValue="#{gs.idgradoseccion}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Dia Asignado:" />
+							<p:selectOneMenu id="cboDia"
+								value="#{horarioController.dia.ididia}" required="true"
+								requiredMessage="El día es Obligatorio">
+								<f:selectItem itemLabel="Seleccione Dia" itemValue="" />
+								<f:selectItems value="#{horarioController.dias}" var="dia"
+									itemLabel="#{dia.nombre}" itemValue="#{dia.ididia}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Hora de Inicio:" />
+							<p:calendar id="time1"
+								value="#{horarioController.horaInicio}"
+								maxMinute="30" minHour="7" maxHour="16" pattern="HH:mm"
+								timeOnly="true" required="true"
+								requiredMessage="La hora de Inicio es Obligatoria" />
+
+							<p:outputLabel value="Hora Fin:" />
+							<p:calendar id="time2"
+								value="#{horarioController.horaFin}" minHour="8"
+								maxHour="17" pattern="HH:mm" timeOnly="true" required="true"
+								requiredMessage="La hora de Fin es Obligatoria" />
+
+
+							<p:commandButton icon="ui-icon-cancel" value="Cancelar"
+								onclick="PF('dlgModificar').hide();" immediate="true" />
+							<p:commandButton icon="ui-icon-check" value="Guardar Cambios"
+								actionListener="#{horarioController.modificarHorario()}" />
+
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog id="dlg2" header="Eliminar Datos" widgetVar="dlgEliminar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formEliminar">
+						<h:outputText
+							value="Desea eliminar la falta?" />
+							<p:separator />
+							<p:panelGrid columns="2">
+							<p:commandButton value="Si"
+								actionListener="#{horarioController.eliminarHorario()}"
+								update=":formMostrarHorario"  />
+							<p:commandButton value="No"
+								actionListener="#{horarioController.cancelar()}"
+								oncomplete="PF('dlgEliminar').hide();" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

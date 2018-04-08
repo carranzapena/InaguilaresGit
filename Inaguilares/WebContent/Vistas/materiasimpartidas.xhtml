@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="content">
+		<div class="ui-fluid">
+			<div class="ui-g">
+			
+			<div class="ui-g-12">
+					<div class="card">
+						<h1>Materias Impartidas</h1>
+						<h:form id="formMateriasImpartir">
+							<p:commandButton icon="ui-icon-plusthick" value="Nueva Asignación Materia"
+								update=":formModificar"
+								actionListener="#{materiasImpartidasController.cancelar()}"
+								oncomplete="PF('dlgModificar').show();" />
+						</h:form>
+					</div>
+				</div>
+
+				<h:form id="formMostrarImpartida">
+					<p:dataTable id="tablaMostrarImpartida" var="matI"
+						value="#{materiasImpartidasController.asignaturasImpartidas}"
+						emptyMessage="No hay datos de asignaturas impartidas" rows="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15" paginator="true"
+						selectionMode="single" selection="#{materiasImpartidasController.asignaturaImpartirSeleccionada}" rowKey="#{matI.idasignaturaimpartir}">
+
+						<p:column headerText="Docente">
+							<h:outputText
+								value="#{matI.docente.persona.nombres} #{matI.docente.persona.apellidos}" />
+						</p:column>
+
+						<p:column headerText="Materia Asignada">
+							<h:outputText
+								value="#{matI.asignatura.nombre} Codigo: #{matI.asignatura.codigo}" />
+						</p:column>
+					</p:dataTable>
+					<p:contextMenu for="tablaMostrarImpartida" id="ctxmn">
+						<p:menuitem value="Eliminar" update=":formEliminar"
+							icon="fa fa-times"
+							actionListener="#{materiasImpartidasController.prepareMaterias()}"
+							oncomplete="PF('dlgEliminar').show();" />
+						<p:menuitem value="Actualizar" update=":formModificar"
+							icon="fa fa-pencil-square-o"
+							actionListener="#{materiasImpartidasController.prepareMaterias()}"
+							oncomplete="PF('dlgModificar').show();" />
+					</p:contextMenu>
+
+				</h:form>
+
+
+				<p:dialog id="dlg" header="Modificar Datos" widgetVar="dlgModificar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formModificar">
+						<p:panelGrid columns="2" style="margin: 0 auto; font-size: 12px;">
+
+							<p:outputLabel value="Docente:" />
+							<p:selectOneMenu id="cboDocente"
+								value="#{materiasImpartidasController.docenteSeleccionado.iddocente}"
+								required="true"
+								requiredMessage="El Nombre del Docente es Obligatorio">
+								<f:selectItems value="#{materiasImpartidasController.docentes}"
+									var="doc"
+									itemLabel="#{doc.persona.nombres}  #{doc.persona.apellidos}"
+									itemValue="#{doc.iddocente}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Materia:" />
+							<p:selectOneMenu id="cboMateria"
+								value="#{materiasImpartidasController.asignaturaSeleccionada.idasignatura}"
+								required="true"
+								requiredMessage="El Nombre de la Materia es Obligatorio">
+								<f:selectItems
+									value="#{materiasImpartidasController.asignaturas}" var="mat"
+									itemLabel="#{mat.nombre}" itemValue="#{mat.idasignatura}" />
+							</p:selectOneMenu>
+
+
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{materiasImpartidasController.modificarAsignaturaImpartida()}"
+								update=":formMostrarImpartida:tablaMostrarImpartida"
+								oncomplete="PF('dlgModificar').hide();" />
+							<p:commandButton value="Cancelar"
+								onclick="PF('dlgModificar').hide();" immediate="true" />
+
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog id="dlg2" header="Eliminar Datos" widgetVar="dlgEliminar"
+					showEffect="explode" hideEffect="explode" modal="true">
+
+					<h:form id="formEliminar">
+						<h:outputText
+							value="Desea eliminar la falta?" />
+							<p:separator />
+							<p:panelGrid columns="2">
+							<p:commandButton value="Si"
+								actionListener="#{materiasImpartidasController.eliminarAsignaturaImpartida()}"
+								update=":formMostrarImpartida"  />
+							<p:commandButton value="No"
+								actionListener="#{materiasImpartidasController.cancelar()}"
+								oncomplete="PF('dlgEliminar').hide();" />
+						</p:panelGrid>
+					</h:form>
+				</p:dialog>
+				
+
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>
